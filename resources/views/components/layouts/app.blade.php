@@ -9,8 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
     <meta name="description" content="This is meta description">
     <meta name="author" content="Themefisher">
-    <link rel="shortcut icon" href={{ asset('front/images/favicon.png') }} type="image/x-icon">
-    <link rel="icon" href={{ asset('front/images/favicon.png') }} type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('front/images/logo.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('front/images/logo.png') }}" type="image/x-icon">
 
     <!-- # Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,6 +22,9 @@
     <link rel="stylesheet" href={{ asset('front/plugins/font-awesome/fontawesome.min.css') }}>
     <link rel="stylesheet" href={{ asset('front/plugins/font-awesome/brands.css') }}>
     <link rel="stylesheet" href={{ asset('front/plugins/font-awesome/solid.css') }}>
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <!-- # Main Style Sheet -->
     <link rel="stylesheet" href={{ asset('front/css/style.css') }}>
@@ -46,25 +49,21 @@
                     <ul class="m-auto mb-2 navbar-nav mb-lg-0">
                         <li class="nav-item"> <a wire:navigate class="nav-link" href="{{ route('home') }}">Home</a>
                         </li>
-                        <li class="nav-item "> <a class="nav-link" href="about.html">About Us</a></li>
+                        <li class="nav-item "> <a wire:navigate class="nav-link" href="{{route('page','about-us')}}">About Us</a></li>
                         <li class="nav-item "> <a wire:navigate class="nav-link"
                                 href="{{ route('servicesPage') }}">Services</a></li>
-                        <li class="nav-item "> <a wire:navigate class="nav-link" href={{ route('teamPage') }}>Our
+                        <li class="nav-item "> <a wire:navigate class="nav-link" href="{{ route('teamPage') }}">Our
                                 Team</a></li>
-                        <li class="nav-item "><a class="nav-link " href="blog.html">Blog</a></li>
-                        <li class="nav-item "><a class="nav-link " href="faq.html">FAQ</a></li>
+                        <li class="nav-item "><a wire:navigate class="nav-link " href="{{route('blog')}}">Blog</a></li>
+                        <li class="nav-item "><a wire:navigate class="nav-link " href="{{route('faqs')}}">FAQ</a></li>
                     </ul>
-                    <a href="#!" class="btn btn-outline-primary">Contact Us</a>
+                    <a wire:navigate href="{{route('contact')}}" class="btn btn-outline-primary">Contact Us</a>
                 </div>
             </div>
         </nav>
     </header>
     <!-- /navigation -->
     {{ $slot }}
-
-
-
-
 
     <footer class="section-sm bg-tertiary">
         <div class="container">
@@ -73,16 +72,11 @@
                     <div class="footer-widget">
                         <h5 class="mb-4 text-primary font-secondary">Service</h5>
                         <ul class="list-unstyled">
-                            <li class="mb-2"><a href="service-details.html">Digital Marketing</a>
+                            @foreach (getServices() as $service)
+                            <li class="mb-2"><a wire:navigate href="{{route('servicePage',$service->id)}}">{{$service->title}}</a>
                             </li>
-                            <li class="mb-2"><a href="service-details.html">Web Design</a>
-                            </li>
-                            <li class="mb-2"><a href="service-details.html">Logo Design</a>
-                            </li>
-                            <li class="mb-2"><a href="service-details.html">Graphic Design</a>
-                            </li>
-                            <li class="mb-2"><a href="service-details.html">SEO</a>
-                            </li>
+                            @endforeach
+
                         </ul>
                     </div>
                 </div>
@@ -90,13 +84,13 @@
                     <div class="footer-widget">
                         <h5 class="mb-4 text-primary font-secondary">Quick Links</h5>
                         <ul class="list-unstyled">
-                            <li class="mb-2"><a href="#!">About Us</a>
+                            <li class="mb-2"><a wire:navigate href="{{route('page','about-us')}}">About Us</a>
                             </li>
-                            <li class="mb-2"><a href="#!">Contact Us</a>
+                            <li class="mb-2"><a wire:navigate href="{{route('contact')}}">Contact Us</a>
                             </li>
-                            <li class="mb-2"><a href="#!">Blog</a>
+                            <li class="mb-2"><a wire:navigate href="{{route('blog')}}">Blog</a>
                             </li>
-                            <li class="mb-2"><a href="#!">Team</a>
+                            <li class="mb-2"><a wire:navigate href="{{route('teamPage')}}">Team</a>
                             </li>
                         </ul>
                     </div>
@@ -105,10 +99,10 @@
                     <div class="footer-widget">
                         <h5 class="mb-4 text-primary font-secondary">Other Links</h5>
                         <ul class="list-unstyled">
-                            <li class="list-inline-item me-4"><a class="text-black" href="privacy-policy.html">Privacy
+                            <li class="list-inline-item me-4"><a class="text-black" wire:navigate href="{{route('page','privacy-policy')}}">Privacy
                                     Policy</a>
                             </li>
-                            <li class="list-inline-item me-4"><a class="text-black" href="terms.html">Terms &amp;
+                            <li class="list-inline-item me-4"><a class="text-black" wire:navigate href="{{route('page','terms-conditions')}}">Terms &amp;
                                     Conditions</a>
                             </li>
                         </ul>

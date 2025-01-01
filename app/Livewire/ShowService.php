@@ -7,16 +7,20 @@ use Livewire\Component;
 
 class ShowService extends Component
 {
-    public $service;
+    public $ServiceSlug = null;
 
-    public function mount($id)
+    public function mount($slug)
     {
-        $this->service = Service::findOrFail($id);
+      $this->ServiceSlug = $slug;
     }
     public function render()
     {
+        $services = Service::where('slug',$this->ServiceSlug)->first();
+        if($services == null) {
+            abort(404);
+        }
         return view('livewire.show-service', [
-            'service' => $this->service
+            'services' => $services
         ]);
     }
 }

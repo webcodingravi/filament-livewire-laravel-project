@@ -5,31 +5,41 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Article;
+use Filament\Forms\Set;
 use App\Models\Category;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Filament\Resources\Resource;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\ArticleResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ArticleResource\RelationManagers;
-use Filament\Forms\Components\RichEditor;
-use Filament\Tables\Columns\TextColumn;
 
 class ArticleResource extends Resource
 {
     protected static ?string $model = Article::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Post';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('title')->required()->placeholder('Please Enter Title..'),
+                TextInput::make('title')->required()->placeholder('Please Enter Title..')
+                ->live(onBlur: true)
+                ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+
+                TextInput::make('slug')->unique(Article::class,'title')->required()->placeholder('Please Enter Slug..'),
                 Select::make('category_id')->label('Category')->options(Category::all()->pluck('name', 'id')),
                 TextInput::make('author')->placeholder('Please Enter Author..'),
                 FileUpload::make('image'),
@@ -46,14 +56,22 @@ class ArticleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('title')->searchable(),
+                TextColumn::make('title')
+                ->searchable()
+                ->toggleable()
+                ->sortable(),
                 TextColumn::make('author')
+                ->sortable()
+                ->searchable()
+                ->toggleable()
             ])
             ->filters([
-                //
+
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

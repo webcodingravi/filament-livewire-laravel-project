@@ -4,7 +4,7 @@
         </div>
         <h3 class="mb-3">{!! $service->title !!}</h3>
         <p class="mb-4">{!! $service->short_desc !!}</p> <a wire:navigate class="btn btn-sm btn-outline-primary"
-            href="{{ route('servicePage', $service->id) }}">View
+            href="{{ route('servicePage', $service->slug) }}">View
             Details <i class="las la-arrow-right ms-1"></i></a>
     </div>
 </div>

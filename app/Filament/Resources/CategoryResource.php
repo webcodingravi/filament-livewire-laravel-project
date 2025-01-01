@@ -22,7 +22,11 @@ class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationGroup = 'Post';
 
     public static function form(Form $form): Form
     {
@@ -44,14 +48,16 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->searchable(),
-                TextColumn::make('slug')
+                TextColumn::make('name')->searchable()->sortable()->toggleable(),
+                TextColumn::make('slug')->searchable()->toggleable()
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

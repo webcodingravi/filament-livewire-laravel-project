@@ -22,7 +22,8 @@ class MemberResource extends Resource
 {
     protected static ?string $model = Member::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {
@@ -47,8 +48,14 @@ class MemberResource extends Resource
         return $table
             ->columns([
                 ImageColumn::make('image')->width(100),
-                TextColumn::make('name')->searchable(),
-                TextColumn::make('designation')->searchable(),
+                TextColumn::make('name')
+                ->searchable()
+                ->sortable()
+                ->toggleable(),
+                TextColumn::make('designation')
+                ->searchable()
+                ->sortable()
+                ->toggleable(),
 
 
             ])
@@ -56,7 +63,9 @@ class MemberResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

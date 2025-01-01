@@ -28,7 +28,7 @@ class EditArticle extends EditRecord
     {
         return Notification::make()
             ->success()
-            ->title('Artical Updated')
-            ->body('Artical Updated Successfully.');
+            ->title('Article Updated')
+            ->body('Article Updated Successfully.');
     }
 }
