@@ -13,8 +13,12 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Exports\ServiceExporter;
 use Filament\Forms\Components\RichEditor;
+use Filament\Tables\Actions\ExportAction;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\ExportBulkAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use App\Filament\Resources\ServiceResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ServiceResource\RelationManagers;
@@ -69,10 +73,21 @@ class ServiceResource extends Resource
                 Tables\Actions\DeleteAction::make()
 
             ])
+            ->headerActions([
+                ExportAction::make()
+                ->exporter(ServiceExporter::class)->formats([
+                   ExportFormat::Csv
+                ])
+                ])
+
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+
+                ExportBulkAction::make()->exporter(ServiceExporter::class)->formats([
+                    ExportFormat::Csv
+                 ])
             ]);
     }
 

@@ -8,14 +8,18 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use App\Filament\Exports\FaqExporter;
 use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\RichEditor;
+use Filament\Tables\Actions\ExportAction;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\FaqResource\Pages;
+use Filament\Tables\Actions\ExportBulkAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\FaqResource\RelationManagers;
-use Filament\Tables\Columns\TextColumn;
 
 class FaqResource extends Resource
 {
@@ -54,10 +58,20 @@ class FaqResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
+            ->headerActions([
+                ExportAction::make()
+                ->exporter(FaqExporter::class)->formats([
+                   ExportFormat::Csv
+                ])
+                ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+
                 ]),
+                ExportBulkAction::make()->exporter(FaqExporter::class)->formats([
+                    ExportFormat::Csv
+                 ])
             ]);
     }
 

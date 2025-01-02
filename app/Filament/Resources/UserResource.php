@@ -3,47 +3,42 @@
 namespace App\Filament\Resources;
 
 use Filament\Forms;
-use App\Models\Page;
+use App\Models\Role;
+use App\Models\User;
 use Filament\Tables;
-use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Support\Str;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
-use App\Filament\Exports\PageExporter;
+use App\Filament\Exports\UserExporter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Actions\ExportAction;
 use Illuminate\Database\Eloquent\Builder;
-use Symfony\Component\Console\Input\Input;
 use Filament\Tables\Actions\ExportBulkAction;
-use App\Filament\Resources\PageResource\Pages;
+use App\Filament\Resources\UserResource\Pages;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\PageResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers;
 
-class PageResource extends Resource
+class UserResource extends Resource
 {
-    protected static ?string $model = Page::class;
+    protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 10;
+
+    protected static ?string $navigationGroup = 'Users';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('title')->required()->placeholder('Please Enter Title')
-                ->live(onBlur: true)
-                ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
-                TextInput::make('slug')->unique(Page::class,'title')
-                ->required()->placeholder('Please Enter Title'),
-                RichEditor::make('content')->placeholder('Please Enter Content')->columnSpan(2),
-                FileUpload::make('image')->columnSpan(2),
+                TextInput::make('name')->required()->placeholder('Please Enter Name...'),
+                TextInput::make('email')->required()->placeholder('Please Enter Email...'),
+                TextInput::make('password')->visibleOn('create')->required()->placeholder('Please Enter Password...'),
+                Select::make('role_id')->required()->options(Role::all()->pluck('role'))->label('Role'),
                 Select::make('status')->options([
                     1 => 'Active',
                     0 => 'Deactive'
@@ -55,10 +50,11 @@ class PageResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('title')
-                ->searchable()
-                ->toggleable()
-                ->sortable()
+                TextColumn::make('name')->searchable()->sortable()->toggleable(),
+                TextColumn::make('email')->searchable()->sortable()->toggleable(),
+
+
+
             ])
             ->filters([
                 //
@@ -66,20 +62,21 @@ class PageResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+                Tables\Actions\DeleteAction::make(),
             ])
             ->headerActions([
                 ExportAction::make()
-                ->exporter(PageExporter::class)->formats([
+                ->exporter(UserExporter::class)->formats([
                    ExportFormat::Csv
                 ])
-                ])
 
+
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-                ExportBulkAction::make()->exporter(PageExporter::class)->formats([
+                ExportBulkAction::make()->exporter(UserExporter::class)->formats([
                     ExportFormat::Csv
                  ])
             ]);
@@ -95,9 +92,9 @@ class PageResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPages::route('/'),
-            'create' => Pages\CreatePage::route('/create'),
-            'edit' => Pages\EditPage::route('/{record}/edit'),
+            'index' => Pages\ListUsers::route('/'),
+            'create' => Pages\CreateUser::route('/create'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }

@@ -3,46 +3,38 @@
 namespace App\Filament\Resources;
 
 use Filament\Forms;
+use App\Models\Role;
 use Filament\Tables;
-use App\Models\Contact;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use Illuminate\Contracts\View\View;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use App\Filament\Exports\RoleExporter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Exports\ContactExporter;
-use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Actions\ExportAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\ExportBulkAction;
+use App\Filament\Resources\RoleResource\Pages;
 use Filament\Actions\Exports\Enums\ExportFormat;
-use App\Filament\Resources\ContactResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\ContactResource\RelationManagers;
+use App\Filament\Resources\RoleResource\RelationManagers;
 
-class ContactResource extends Resource
+class RoleResource extends Resource
 {
-    protected static ?string $model = Contact::class;
+    protected static ?string $model = Role::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-right-circle';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 11;
+
+    protected static ?string $navigationGroup = 'Users';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                RichEditor::make('contact')->placeholder('Please Enter Contact Details..')->columnSpan(2),
-                TextInput::make('fb_url')->url()->placeholder('Please Enter Facebook URL..')
-                ->label('Facebook URL'),
-                TextInput::make('tw_url')->url()->placeholder('Please Enter Twitter URL..')
-                ->label('Twitter URL'),
-                TextInput::make('instagram_url')->url()->placeholder('Please Enter Instagram URL..')
-                ->label('Instagram URL'),
-
+                TextInput::make('role')->required()->placeholder('Please Enter User Role..')
             ]);
     }
 
@@ -50,9 +42,7 @@ class ContactResource extends Resource
     {
         return $table
             ->columns([
-               TextColumn::make('contact')
-               ->wrap()
-               ->html()->searchable()->sortable()
+                 TextColumn::make('role')->searchable()->sortable()->toggleable()
             ])
             ->filters([
                 //
@@ -62,9 +52,10 @@ class ContactResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
+
             ->headerActions([
                 ExportAction::make()
-                ->exporter(ContactExporter::class)->formats([
+                ->exporter(RoleExporter::class)->formats([
                    ExportFormat::Csv
                 ])
                 ])
@@ -73,8 +64,7 @@ class ContactResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-
-                ExportBulkAction::make()->exporter(ContactExporter::class)->formats([
+                ExportBulkAction::make()->exporter(RoleExporter::class)->formats([
                     ExportFormat::Csv
                  ])
             ]);
@@ -90,9 +80,9 @@ class ContactResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListContacts::route('/'),
-            'create' => Pages\CreateContact::route('/create'),
-            'edit' => Pages\EditContact::route('/{record}/edit'),
+            'index' => Pages\ListRoles::route('/'),
+            'create' => Pages\CreateRole::route('/create'),
+            'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }
 }
